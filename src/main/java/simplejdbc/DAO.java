@@ -61,7 +61,8 @@ public class DAO {
 		// Une requête SQL paramétrée
 		String sql = "DELETE FROM CUSTOMER WHERE CUSTOMER_ID = ?";
 		try (Connection connection = myDataSource.getConnection();
-			PreparedStatement stmt = connection.prepareStatement(sql)) {
+			PreparedStatement stmt = connection.prepareStatement(sql)
+                        ) {
 			// Définir la valeur du paramètre
 			stmt.setInt(1, customerId);
 
@@ -80,7 +81,22 @@ public class DAO {
 	 * @throws DAOException
 	 */
 	public int numberOfOrdersForCustomer(int customerId) throws DAOException {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+            String sql = "SELECT COUNT(*) AS NOM_COMM FROM PURCHASE_ORDER WHERE CUSTOMER_ID = ?";
+            int result = 0;
+		try (Connection connection = myDataSource.getConnection();
+			PreparedStatement stmt = connection.prepareStatement(sql);)
+                         {
+			// Définir la valeur du paramètre
+			stmt.setInt(1, customerId);
+                        ResultSet rs = stmt.executeQuery();
+                        rs.next();
+			result = rs.getInt("NOM_COMM");
+			return result;
+
+		} catch (SQLException ex) {
+			Logger.getLogger("DAO").log(Level.SEVERE, null, ex);
+			throw new DAOException(ex.getMessage());
+		}
 	}
 
 	/**
