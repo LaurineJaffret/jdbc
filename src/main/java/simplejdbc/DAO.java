@@ -107,7 +107,24 @@ public class DAO {
 	 * @throws DAOException
 	 */
 	CustomerEntity findCustomer(int customerID) throws DAOException {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+            String sql = "SELECT NAME,ADDRESSLINE1 FROM CUSTOMER WHERE CUSTOMER_ID = ?";
+            String nom="";
+            String add="";
+		try (Connection connection = myDataSource.getConnection();
+			PreparedStatement stmt = connection.prepareStatement(sql);)
+                         {
+			// Définir la valeur du paramètre
+			stmt.setInt(1, customerID);
+                        ResultSet rs = stmt.executeQuery();
+                        rs.next();
+			nom= rs.getString(1);
+                        add= rs.getString(2);
+			return new CustomerEntity(customerID,nom,add);
+
+		} catch (SQLException ex) {
+			Logger.getLogger("DAO").log(Level.SEVERE, null, ex);
+			throw new DAOException(ex.getMessage());
+		}
 	}
 
 	/**
